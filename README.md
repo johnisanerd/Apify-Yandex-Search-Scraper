@@ -60,7 +60,7 @@ python yandex-scraper.py
 
 ## 🌟 Why Choose This Scraper?
 
-### "I Soviet Russia, Yandex website scrape you!" 🇷🇺🇺🇸
+### "In Soviet Russia, Yandex website scrape you!" 🇷🇺🇺🇸
 
 The Yandex Search data scraper delivers enterprise-grade performance with these advanced capabilities:
 
