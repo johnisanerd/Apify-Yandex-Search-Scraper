@@ -4,6 +4,8 @@ https://apify.com/johnvc/scrape-yandex?fpr=9n7kx3
 
 > **The most efficient, reliable, and developer-friendly Yandex search scraper**
 
+> **Самый эффективный, надежный и удобный для разработчиков парсер поиска Яндекса**
+
 ## 🚀 Quick Start
 
 ### Prerequisites
