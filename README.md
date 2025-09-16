@@ -2,7 +2,7 @@ https://apify.com/johnvc/scrape-yandex?fpr=9n7kx3
 
 # 🚀 Yandex Search Scraper 🇷🇺🇺🇸
 
-> **The most efficient, reliable, and developer-friendly Yandex search scraper**
+> **The most efficient, reliable, and [developer-friendly Yandex search scraper](https://yandex.com/search/?text=How+do+you+scrape+yandex+search+results%3F&lr=102820&search_source=yacom_desktop_common)**
 
 > **Самый эффективный, надежный и удобный для разработчиков парсер поиска Яндекса**
 
