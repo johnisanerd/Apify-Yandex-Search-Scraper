@@ -259,4 +259,4 @@ Search for "yandex scrapers" with English domain, English language, and location
 **Made with ❤️**
 
 *Transform your search automation with the most reliable and efficient Yandex search scraper on the market.*
-Last Updated: 2026.01.07
+Last Updated: 2026.01.08
