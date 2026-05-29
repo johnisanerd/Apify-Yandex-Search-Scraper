@@ -14,7 +14,7 @@ The Yandex API runs a Yandex search for any query and returns clean, structured 
 ## Quick Start
 
 ### Prerequisites
-- Python 3.10 or higher
+- Python 3.11 or higher
 - An Apify account and API key ([get a free key here](https://apify.com?fpr=9n7kx3))
 
 1. **Clone the repository**
