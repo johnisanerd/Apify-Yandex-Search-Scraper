@@ -19,17 +19,34 @@ load_dotenv()
 # Initialize the Apify client with your API token (read from .env)
 client = ApifyClient(os.getenv("APIFY_API_TOKEN"))
 
-# Build the Actor input.
+# Build the Actor input. | Сформируйте входные данные актора.
 # Inputs are kept small (one query, max_pages=1) to keep this first run
 # inexpensive. Raise these once you have your own API key and know your budget.
+# Параметры намеренно небольшие (один запрос, max_pages=1), чтобы первый запуск
+# был дешёвым. Увеличьте их, когда у вас будет свой ключ и понятный бюджет.
 run_input = {
-    "text": "machine learning",    # the only required field
+    "text": "machine learning",    # the only required field | единственное обязательное поле
     "yandex_domain": "yandex.com",  # 15+ domains: yandex.com, yandex.ru, yandex.com.tr, ...
     "lang": "en",                   # 19 languages: en, ru, tr, de, ...
     "lr": 84,                       # region ID (84 = United States, 225 = Russia)
-    "groups_on_page": 10,           # results per page (1 to 20)
+    "groups_on_page": 10,           # results per page (1 to 20) | результатов на странице
+    "family_mode": 1,               # safe search: 0 off, 1 moderate, 2 strict | безопасный поиск
+    "fix_typo": True,               # auto-correct spelling | автоисправление опечаток
     "max_pages": 1,                 # pages to fetch; kept at 1 to keep the run cheap
 }
+
+# Russian-market example. Swap it in to search the Russian index in Russian,
+# localized to Moscow (lr=213). The date: operator filters by a time window.
+# Пример для российского рынка. Подставьте его, чтобы искать в русском индексе
+# на русском языке с локализацией по Москве (lr=213). Оператор date: фильтрует по дате.
+# run_input = {
+#     "text": "машинное обучение date:20260101..20261231",
+#     "yandex_domain": "yandex.ru",
+#     "lang": "ru",
+#     "lr": 213,
+#     "groups_on_page": 20,
+#     "max_pages": 1,
+# }
 
 # Run the Actor and wait for it to finish
 run = client.actor("johnvc/Scrape-Yandex").call(run_input=run_input)

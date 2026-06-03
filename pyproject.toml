@@ -1,8 +1,14 @@
 [project]
 name = "apify-yandex-api"
 version = "0.1.0"
-description = "Example client for the Yandex API Apify Actor"
+description = "Example client for the Yandex API Apify Actor - Парсер Поиска Яндекса"
 readme = "README.md"
+keywords = [
+    "yandex", "yandex-search", "yandex-search-engine", "yandex-seo",
+    "yandex-api", "serp", "serp-api", "search", "seo", "russia", "apify", "mcp",
+    "яндекс", "парсер яндекса", "парсер поиска яндекса", "поиск яндекса",
+    "поисковик яндекс", "выдача яндекса", "серп", "россия", "парсер",
+]
 requires-python = ">=3.11"
 dependencies = [
     "apify-client>=3.0.0",
