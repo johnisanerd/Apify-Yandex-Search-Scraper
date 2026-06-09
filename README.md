@@ -323,4 +323,4 @@ More help: https://docs.apify.com/platform/integrations/mcp
 
 *Use the Yandex API to power your search and SEO workflows with reliable, structured results.*
 
-Last Updated: 2026.06.09
+Last Updated: 2026.06.10
