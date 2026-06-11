@@ -56,7 +56,7 @@ uv run python yandex-scraper.py
 
 **Full results-page coverage.** One call returns the whole Yandex results page as structured data: organic listings, paid ads, knowledge graph entity cards, inline image panels, and inline video panels. You get the entire page, not just the organic links.
 
-**Built for Russian-speaking and CIS markets.** Target 15+ Yandex domains (yandex.com, yandex.ru, yandex.com.tr, and more), 19 languages, and any of 123,000+ region IDs. That makes it practical for SEO, competitive intelligence, and brand monitoring across Russia, Eastern Europe, Central Asia, and beyond.
+**Built for Russian-speaking and CIS markets.** Target 6 Yandex domains (yandex.com, yandex.ru, yandex.by, yandex.kz, yandex.uz, yandex.com.tr), 19 languages, and any of 123,000+ region IDs. That makes it practical for SEO, competitive intelligence, and brand monitoring across Russia, Eastern Europe, Central Asia, and beyond.
 
 **Predictable, pay-per-use pricing.** Billing is per run plus per page processed, with no monthly rental. You pay for the searches you actually make, and you control cost directly with the page limit.
 
@@ -122,7 +122,7 @@ Yandex supports a native date-range operator inside the query text. Append `date
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `text` | `string` | Yes | - | The search query. Supports Yandex operators such as `date:YYYYMMDD..YYYYMMDD`. |
-| `yandex_domain` | `string` | No | `yandex.com` | Yandex domain, e.g. `yandex.ru`, `yandex.com.tr`, `yandex.kz` (15+ supported). |
+| `yandex_domain` | `string` | No | `yandex.com` | Yandex domain, e.g. `yandex.ru`, `yandex.com.tr`, `yandex.kz` (6 supported). |
 | `lang` | `string` | No | `en` | Language code, e.g. `ru`, `en`, `tr`, `de` (19 supported); `null` for unspecified. |
 | `lr` | `integer` | No | (domain default) | Region ID, e.g. `225` = Russia, `84` = United States, `149` = Belarus. 123,000+ IDs; see the Actor page for the full table. |
 | `max_pages` | `integer` | No | `2` | Maximum pages to fetch (`0` = no limit). |

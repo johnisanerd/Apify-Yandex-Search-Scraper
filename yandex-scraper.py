@@ -26,7 +26,7 @@ client = ApifyClient(os.getenv("APIFY_API_TOKEN"))
 # был дешёвым. Увеличьте их, когда у вас будет свой ключ и понятный бюджет.
 run_input = {
     "text": "machine learning",    # the only required field | единственное обязательное поле
-    "yandex_domain": "yandex.com",  # 15+ domains: yandex.com, yandex.ru, yandex.com.tr, ...
+    "yandex_domain": "yandex.com",  # 6 domains: yandex.com, yandex.ru, yandex.by, yandex.kz, yandex.uz, yandex.com.tr
     "lang": "en",                   # 19 languages: en, ru, tr, de, ...
     "lr": 84,                       # region ID (84 = United States, 225 = Russia)
     "groups_on_page": 10,           # results per page (1 to 20) | результатов на странице
