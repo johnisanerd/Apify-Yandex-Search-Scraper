@@ -7,7 +7,7 @@
 **Actor page:** [apify.com/johnvc/Scrape-Yandex](https://apify.com/johnvc/Scrape-Yandex?fpr=9n7kx3)
 **Input schema:** [apify.com/johnvc/Scrape-Yandex/input-schema](https://apify.com/johnvc/Scrape-Yandex/input-schema?fpr=9n7kx3)
 
-The Yandex API runs a Yandex search for any query and returns clean, structured JSON. Each page of results comes back with organic listings (title, link, snippet, position, sitelinks), paid ads, knowledge graph entity cards, inline image panels, and inline video panels, plus per-page metadata. It supports 15+ Yandex domains, 19 languages, and region targeting across 123,000+ locations, with automatic pagination and safe-search controls.
+The Yandex API runs a Yandex search for any query and returns clean, structured JSON. Choose the result types you want a la carte (organic listings, paid ads, knowledge graph entity cards, inline image panels, inline video panels); each selected type comes back as its own item tagged with `item_type`, plus per-page metadata. It supports 6 Yandex domains, 19 languages, and region targeting across 123,000+ locations, with sort/recency filters and fast parallel pagination.
 
 ## Video Walkthrough
 
@@ -68,14 +68,16 @@ uv run python yandex-scraper.py
 
 ### Core Capabilities
 - **Keyword search** across Yandex with full results-page extraction
-- **Domain localization** across 15+ Yandex domains
+- **A la carte result types**: toggle organic results, ads, knowledge graph, inline images, and inline videos independently; each selected type is returned as its own item tagged with `item_type`
+- **Domain localization** across 6 Yandex domains
 - **Language targeting** with 19 supported languages
 - **Region targeting** with 123,000+ location IDs (the `lr` parameter)
-- **Safe search and typo correction** controls, plus automatic multi-page pagination
+- **Sort and recency filters**: `sort_mode` (relevance or date) and `period` (all, day, last_two_weeks, month)
+- **Safe search and typo correction** controls, plus fast parallel multi-page pagination
 
 ### Data Quality
 - **Structured organic results** with title, link, snippet, position, displayed link, date, and sitelinks
-- **Rich result blocks**: ads, knowledge graph, inline images, inline videos
+- **Rich result blocks**: ads, knowledge graph, inline images, inline videos, each with a `result_count`
 - **Per-page metadata** with domain, language, location, and pagination details
 - **Consistent JSON** shape across every query
 - **Per-page billing** so larger searches stay transparent
@@ -106,13 +108,27 @@ A Russian-domain search with Russian language, a region ID, more results per pag
 }
 ```
 
-### Tip: filter by date
-Yandex supports a native date-range operator inside the query text. Append `date:YYYYMMDD..YYYYMMDD` to `text` to limit results to a time window. No extra parameters needed.
+### A la carte: collect ads and the knowledge graph
+Enable just the result types you want. Here organic is off and only ads plus the knowledge graph are returned, each as its own item.
 ```json
 {
-  "text": "climate news date:20260317..20260417",
-  "yandex_domain": "yandex.com",
-  "lang": "en",
+  "text": "best running shoes",
+  "include_organic_results": false,
+  "include_ads": true,
+  "include_knowledge_graph": true,
+  "max_pages": 1
+}
+```
+
+### Fresh results: sort by date, last two weeks
+Use `sort_mode` and `period` to focus on recent content. They apply to every selected result type.
+```json
+{
+  "text": "ai news",
+  "yandex_domain": "yandex.ru",
+  "lang": "ru",
+  "sort_mode": "date",
+  "period": "last_two_weeks",
   "max_pages": 1
 }
 ```
@@ -121,11 +137,18 @@ Yandex supports a native date-range operator inside the query text. Append `date
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| `text` | `string` | Yes | - | The search query. Supports Yandex operators such as `date:YYYYMMDD..YYYYMMDD`. |
+| `text` | `string` | Yes | - | The search query. Supports Yandex operators such as `site:wikipedia.org python`. |
+| `include_organic_results` | `boolean` | No | `true` | Return organic results (`item_type` `organic`). |
+| `include_ads` | `boolean` | No | `false` | Return paid ads when present (`item_type` `ads`). |
+| `include_knowledge_graph` | `boolean` | No | `false` | Return the knowledge graph card when present (`item_type` `knowledge_graph`). |
+| `include_inline_images` | `boolean` | No | `false` | Return the inline image strip (`item_type` `inline_images`). |
+| `include_inline_videos` | `boolean` | No | `false` | Return the inline video carousel (`item_type` `inline_videos`). |
 | `yandex_domain` | `string` | No | `yandex.com` | Yandex domain, e.g. `yandex.ru`, `yandex.com.tr`, `yandex.kz` (6 supported). |
 | `lang` | `string` | No | `en` | Language code, e.g. `ru`, `en`, `tr`, `de` (19 supported); `null` for unspecified. |
 | `lr` | `integer` | No | (domain default) | Region ID, e.g. `225` = Russia, `84` = United States, `149` = Belarus. 123,000+ IDs; see the Actor page for the full table. |
-| `max_pages` | `integer` | No | `2` | Maximum pages to fetch (`0` = no limit). |
+| `max_pages` | `integer` | No | `2` | Maximum pages to fetch (`0` = no limit). Applies to every selected result type. |
+| `sort_mode` | `string` | No | `relevance` | Result ordering: `relevance` or `date` (newest first). |
+| `period` | `string` | No | `all` | Recency window: `all`, `day`, `last_two_weeks`, `month`. |
 | `groups_on_page` | `integer` | No | `10` | Results per page (1 to 20). |
 | `family_mode` | `integer` | No | `1` | Safe search: `0` = off, `1` = moderate, `2` = strict. |
 | `fix_typo` | `boolean` | No | `true` | Auto-correct spelling errors in the query. |
@@ -133,10 +156,12 @@ Yandex supports a native date-range operator inside the query text. Append `date
 
 ## Output Format
 
-A representative dataset item for the query `Apple`. Each page of results is one dataset item; arrays and some fields are trimmed here for readability.
+Each selected result type present on a page is returned as its own dataset item, tagged with `item_type` (`organic`, `ads`, `knowledge_graph`, `inline_images`, or `inline_videos`) and a `result_count`. A representative `organic` item for the query `Apple` is shown below; arrays and some fields are trimmed here for readability.
 
 ```json
 {
+  "item_type": "organic",
+  "result_count": 10,
   "text": "Apple",
   "yandex_domain": "yandex.com",
   "lang": "en",
@@ -323,4 +348,4 @@ More help: https://docs.apify.com/platform/integrations/mcp
 
 *Use the Yandex API to power your search and SEO workflows with reliable, structured results.*
 
-Last Updated: 2026.06.11
+Last Updated: 2026.06.13

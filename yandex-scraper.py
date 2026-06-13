@@ -26,9 +26,22 @@ client = ApifyClient(os.getenv("APIFY_API_TOKEN"))
 # был дешёвым. Увеличьте их, когда у вас будет свой ключ и понятный бюджет.
 run_input = {
     "text": "machine learning",    # the only required field | единственное обязательное поле
+    # Choose your result types a la carte. Organic is on by default; enable the
+    # others to also collect ads, the knowledge graph card, inline images, and
+    # inline videos. Each enabled type that appears on the page is returned as
+    # its own dataset item, tagged with an "item_type" field.
+    # Выберите типы результатов. Каждый выбранный тип возвращается отдельным
+    # элементом набора данных с полем "item_type".
+    "include_organic_results": True,
+    "include_ads": False,
+    "include_knowledge_graph": True,
+    "include_inline_images": False,
+    "include_inline_videos": False,
     "yandex_domain": "yandex.com",  # 6 domains: yandex.com, yandex.ru, yandex.by, yandex.kz, yandex.uz, yandex.com.tr
     "lang": "en",                   # 19 languages: en, ru, tr, de, ...
     "lr": 84,                       # region ID (84 = United States, 225 = Russia)
+    "sort_mode": "relevance",       # "relevance" (default) or "date" (newest first)
+    "period": "all",                # time window: all | day | last_two_weeks | month
     "groups_on_page": 10,           # results per page (1 to 20) | результатов на странице
     "family_mode": 1,               # safe search: 0 off, 1 moderate, 2 strict | безопасный поиск
     "fix_typo": True,               # auto-correct spelling | автоисправление опечаток
@@ -36,15 +49,16 @@ run_input = {
 }
 
 # Russian-market example. Swap it in to search the Russian index in Russian,
-# localized to Moscow (lr=213). The date: operator filters by a time window.
-# Пример для российского рынка. Подставьте его, чтобы искать в русском индексе
-# на русском языке с локализацией по Москве (lr=213). Оператор date: фильтрует по дате.
+# localized to Moscow (lr=213), sorted newest-first within the last two weeks.
+# Пример для российского рынка: русский индекс, локализация по Москве (lr=213),
+# сортировка по дате за последние две недели.
 # run_input = {
-#     "text": "машинное обучение date:20260101..20261231",
+#     "text": "машинное обучение",
 #     "yandex_domain": "yandex.ru",
 #     "lang": "ru",
 #     "lr": 213,
-#     "groups_on_page": 20,
+#     "sort_mode": "date",
+#     "period": "last_two_weeks",
 #     "max_pages": 1,
 # }
 
@@ -57,14 +71,31 @@ if run is None:
 items = list(client.dataset(run.default_dataset_id).iterate_items())
 print(f"Returned {len(items)} item(s).\n")
 
-# Show a few key fields from each page of results.
+# Each item carries one result type, named by "item_type". Map each type to the
+# array that holds its rows so we can print any of them the same way.
+ARRAY_KEY = {
+    "organic": "organic_results",
+    "ads": "ads_results",
+    "knowledge_graph": "knowledge_graph",
+    "inline_images": "inline_images",
+    "inline_videos": "inline_videos",
+}
+
 for item in items:
+    item_type = item.get("item_type", "organic")
+    rows = item.get(ARRAY_KEY.get(item_type, "organic_results")) or []
     print(
-        f"Query: {item.get('text')}  |  "
-        f"Page: {item.get('page_number')}  |  "
-        f"Results found: {item.get('total_results_found')}"
+        f"[{item_type}] page {item.get('page_number')}  |  "
+        f"results in item: {item.get('result_count')}  |  "
+        f"total organic found: {item.get('total_results_found')}"
     )
-    for result in (item.get("organic_results") or [])[:5]:
-        print(f"  {result.get('position')}. {result.get('title')}")
-        print(f"     {result.get('link')}")
+    for row in rows[:5]:
+        # organic/ads/images/videos expose title + link; knowledge graph uses title + description.
+        title = row.get("title", "")
+        detail = row.get("link") or row.get("description", "")
+        position = row.get("position")
+        prefix = f"  {position}. " if position else "  - "
+        print(f"{prefix}{title}")
+        if detail:
+            print(f"     {detail}")
     print()
