@@ -274,7 +274,7 @@ claude mcp add --transport http apify \
 4. Или выберите **Add custom connector** и вставьте полный URL MCP `https://mcp.apify.com/?tools=actors,docs,johnvc/Scrape-Yandex`, пройдя OAuth при запросе.
 5. Попросите Claude запустить Yandex API.
 
-Откройте Claude в браузере: https://claude.ai
+Откройте Claude в браузере: https://claude.ai/referral/uIlpa7nPLg
 
 ## Установка в Cursor
 
